@@ -129,7 +129,59 @@ class AppState extends ChangeNotifier {
 
   void addTransaction(TransactionModel transaction) {
     _transactions.add(transaction);
+    _applyTransactionToWallet(transaction);
     notifyListeners();
+  }
+
+  void updateTransaction(TransactionModel updatedTransaction) {
+    final transactionIndex = _transactions.indexWhere(
+      (transaction) => transaction.id == updatedTransaction.id,
+    );
+
+    if (transactionIndex == -1) {
+      return;
+    }
+
+    final oldTransaction = _transactions[transactionIndex];
+    _rollbackTransactionFromWallet(oldTransaction);
+    _transactions[transactionIndex] = updatedTransaction;
+    _applyTransactionToWallet(updatedTransaction);
+    notifyListeners();
+  }
+
+  void deleteTransaction(String transactionId) {
+    final transactionIndex = _transactions.indexWhere(
+      (transaction) => transaction.id == transactionId,
+    );
+
+    if (transactionIndex == -1) {
+      return;
+    }
+
+    final transaction = _transactions.removeAt(transactionIndex);
+    _rollbackTransactionFromWallet(transaction);
+    notifyListeners();
+  }
+
+  void _applyTransactionToWallet(TransactionModel transaction) {
+    _changeWalletBalance(transaction.walletId, transaction.signedAmount);
+  }
+
+  void _rollbackTransactionFromWallet(TransactionModel transaction) {
+    _changeWalletBalance(transaction.walletId, -transaction.signedAmount);
+  }
+
+  void _changeWalletBalance(String walletId, double amountChange) {
+    final walletIndex = _wallets.indexWhere((wallet) => wallet.id == walletId);
+
+    if (walletIndex == -1) {
+      return;
+    }
+
+    final wallet = _wallets[walletIndex];
+    _wallets[walletIndex] = wallet.copyWith(
+      balance: wallet.balance + amountChange,
+    );
   }
 
   T? _firstWhereOrNull<T>(Iterable<T> items, bool Function(T item) test) {

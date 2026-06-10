@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saveup/screens/home/home_screen.dart';
+import 'package:saveup/screens/transaction/add_transaction_screen.dart';
+import 'package:saveup/screens/transaction/transaction_list_screen.dart';
 import 'package:saveup/state/app_state.dart';
 import 'package:saveup/widgets/coming_soon_placeholder.dart';
 
@@ -26,22 +28,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
   }
 
+  void _openTransactionListTab() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+  }
+
+  void _refreshTransactionUi() {
+    setState(() {});
+  }
+
   List<Widget> get _pages {
     return [
       HomeScreen(
         appState: _appState,
         onAddTransactionTap: _openAddTransactionTab,
       ),
-      const ComingSoonPlaceholder(
-        icon: Icons.receipt_long_rounded,
-        title: 'Giao dịch',
-        description: 'Danh sách thu chi sẽ hiển thị tại đây.',
+      TransactionListScreen(
+        appState: _appState,
+        onAddTransactionTap: _openAddTransactionTab,
+        onTransactionChanged: _refreshTransactionUi,
       ),
-      const ComingSoonPlaceholder(
-        icon: Icons.add_circle_rounded,
-        title: 'Thêm giao dịch',
-        description:
-            'Form thêm khoản thu/chi sẽ được xây dựng ở giai đoạn sau.',
+      AddTransactionScreen(
+        appState: _appState,
+        onTransactionSaved: _openTransactionListTab,
       ),
       const ComingSoonPlaceholder(
         icon: Icons.account_balance_wallet_rounded,
