@@ -32,10 +32,8 @@ void main() {
     await tester.tap(loginButton);
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Tổng quan tài chính của bạn sẽ hiển thị tại đây.'),
-      findsOneWidget,
-    );
+    expect(find.text('Số dư hiện tại'), findsOneWidget);
+    expect(find.text('Giao dịch gần đây'), findsOneWidget);
   });
 
   testWidgets('MainNavigationScreen renders all main tabs', (
@@ -44,6 +42,7 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: MainNavigationScreen()));
 
     expect(find.text('Trang chủ'), findsWidgets);
+    expect(find.text('Số dư hiện tại'), findsOneWidget);
     expect(find.text('Giao dịch'), findsWidgets);
     expect(find.text('Thêm'), findsOneWidget);
     expect(find.text('Ví tiền'), findsWidgets);

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:saveup/screens/home/home_screen.dart';
+import 'package:saveup/state/app_state.dart';
 import 'package:saveup/widgets/coming_soon_placeholder.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -9,35 +11,50 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  final _appState = AppState();
   var _selectedIndex = 0;
 
-  final _pages = const [
-    ComingSoonPlaceholder(
-      icon: Icons.home_rounded,
-      title: 'Trang chủ',
-      description: 'Tổng quan tài chính của bạn sẽ hiển thị tại đây.',
-    ),
-    ComingSoonPlaceholder(
-      icon: Icons.receipt_long_rounded,
-      title: 'Giao dịch',
-      description: 'Danh sách thu chi sẽ hiển thị tại đây.',
-    ),
-    ComingSoonPlaceholder(
-      icon: Icons.add_circle_rounded,
-      title: 'Thêm giao dịch',
-      description: 'Form thêm khoản thu/chi sẽ được xây dựng ở giai đoạn sau.',
-    ),
-    ComingSoonPlaceholder(
-      icon: Icons.account_balance_wallet_rounded,
-      title: 'Ví tiền',
-      description: 'Danh sách ví của bạn sẽ hiển thị tại đây.',
-    ),
-    ComingSoonPlaceholder(
-      icon: Icons.person_rounded,
-      title: 'Cá nhân',
-      description: 'Thông tin tài khoản và cài đặt sẽ hiển thị tại đây.',
-    ),
-  ];
+  @override
+  void dispose() {
+    _appState.dispose();
+    super.dispose();
+  }
+
+  void _openAddTransactionTab() {
+    setState(() {
+      _selectedIndex = 2;
+    });
+  }
+
+  List<Widget> get _pages {
+    return [
+      HomeScreen(
+        appState: _appState,
+        onAddTransactionTap: _openAddTransactionTab,
+      ),
+      const ComingSoonPlaceholder(
+        icon: Icons.receipt_long_rounded,
+        title: 'Giao dịch',
+        description: 'Danh sách thu chi sẽ hiển thị tại đây.',
+      ),
+      const ComingSoonPlaceholder(
+        icon: Icons.add_circle_rounded,
+        title: 'Thêm giao dịch',
+        description:
+            'Form thêm khoản thu/chi sẽ được xây dựng ở giai đoạn sau.',
+      ),
+      const ComingSoonPlaceholder(
+        icon: Icons.account_balance_wallet_rounded,
+        title: 'Ví tiền',
+        description: 'Danh sách ví của bạn sẽ hiển thị tại đây.',
+      ),
+      const ComingSoonPlaceholder(
+        icon: Icons.person_rounded,
+        title: 'Cá nhân',
+        description: 'Thông tin tài khoản và cài đặt sẽ hiển thị tại đây.',
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
