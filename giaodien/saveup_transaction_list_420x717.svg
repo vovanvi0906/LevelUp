@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="420" height="717" viewBox="0 0 420 717" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="420" y2="717" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FCFA"/>
+      <stop offset="1" stop-color="#EEF5FB"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="0" y1="0" x2="108" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34C62D"/>
+      <stop offset="1" stop-color="#1788F3"/>
+    </linearGradient>
+    <linearGradient id="fab" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34C62D"/>
+      <stop offset="1" stop-color="#1788F3"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="520" height="860" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="8"/>
+      <feGaussianBlur stdDeviation="12"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.16 0 0 0 0 0.31 0 0 0 0.10 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+    <style>
+      .title { font-family: Inter, Arial, sans-serif; font-weight: 800; fill: #132650; }
+      .subtitle { font-family: Inter, Arial, sans-serif; font-weight: 600; fill: #7687A1; }
+      .body { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #213860; }
+      .light { font-family: Inter, Arial, sans-serif; font-weight: 600; fill: #8DA0B8; }
+      .white { font-family: Inter, Arial, sans-serif; font-weight: 800; fill: white; }
+      .stroke { stroke: #D9E3EE; stroke-width: 1.4; }
+    </style>
+  </defs>
+
+  <rect width="420" height="717" fill="url(#bg)"/>
+  <circle cx="390" cy="70" r="72" fill="#E1EDFB"/>
+  <circle cx="26" cy="672" r="56" fill="#DDEBF9"/>
+  <circle cx="386" cy="686" r="46" fill="#DDEFE5"/>
+
+  <!-- Status bar -->
+  <text x="28" y="24" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#132650">9:41</text>
+  <g transform="translate(332,13)" stroke="#132650" stroke-width="1.5" fill="none">
+    <rect x="32" y="0" width="18" height="10" rx="2"/>
+    <rect x="50.5" y="3" width="1.8" height="4" rx="0.8" fill="#132650" stroke="none"/>
+    <rect x="34" y="2" width="12" height="6" rx="1" fill="#132650" stroke="none"/>
+    <path d="M0 10V4.5C0 2.6 1.6 1 3.5 1H7.5C9.4 1 11 2.6 11 4.5V10"/>
+    <path d="M15 10V6.5C15 3.5 17.5 1 20.5 1C23.5 1 26 3.5 26 6.5V10"/>
+  </g>
+
+  <!-- Header -->
+  <g transform="translate(24,42)">
+    <rect x="0" y="0" width="40" height="40" rx="14" fill="#FFFFFF" class="stroke"/>
+    <path d="M23 12L15 20L23 28" stroke="#5B6E8B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17 20H27" stroke="#5B6E8B" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <text x="210" y="68" text-anchor="middle" class="title" font-size="22">Danh sách giao dịch</text>
+  <text x="210" y="88" text-anchor="middle" class="subtitle" font-size="12">Transaction List Screen</text>
+
+  <!-- Filter chips -->
+  <g filter="url(#shadow)">
+    <rect x="24" y="108" width="372" height="72" rx="24" fill="#FFFFFF"/>
+  </g>
+  <text x="44" y="131" class="subtitle" font-size="12">Bộ lọc</text>
+  <rect x="44" y="140" width="84" height="28" rx="14" fill="url(#cta)"/>
+  <text x="86" y="158" text-anchor="middle" class="white" font-size="12">Tất cả</text>
+  <rect x="136" y="140" width="64" height="28" rx="14" fill="#F4F7FB" class="stroke"/>
+  <text x="168" y="158" text-anchor="middle" class="body" font-size="12">Thu</text>
+  <rect x="208" y="140" width="64" height="28" rx="14" fill="#F4F7FB" class="stroke"/>
+  <text x="240" y="158" text-anchor="middle" class="body" font-size="12">Chi</text>
+  <rect x="286" y="136" width="90" height="34" rx="16" fill="#FBFDFF" class="stroke"/>
+  <rect x="300" y="145" width="14" height="12" rx="3" stroke="#1788F3" stroke-width="1.6" fill="none"/>
+  <path d="M300 149H314" stroke="#1788F3" stroke-width="1.6"/>
+  <path d="M304 141V146M310 141V146" stroke="#1788F3" stroke-width="1.6" stroke-linecap="round"/>
+  <text x="338" y="158" text-anchor="middle" class="body" font-size="11.5">Tháng 6</text>
+  <path d="M360 149L366 155L372 149" stroke="#8EA0B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Summary card -->
+  <g filter="url(#shadow)">
+    <rect x="24" y="194" width="372" height="76" rx="24" fill="#FFFFFF"/>
+  </g>
+  <text x="44" y="218" class="subtitle" font-size="12">Tổng quan tháng này</text>
+  <text x="44" y="245" class="title" font-size="24">7.885.000 đ</text>
+  <text x="44" y="260" class="light" font-size="10.5">Số dư sau khi trừ chi tiêu</text>
+  <rect x="258" y="216" width="118" height="16" rx="8" fill="#EEF9F1"/>
+  <text x="317" y="227" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="700" fill="#2FBE35">Thu: +8.000.000 đ</text>
+  <rect x="258" y="238" width="118" height="16" rx="8" fill="#FFF3F3"/>
+  <text x="317" y="249" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="700" fill="#F04444">Chi: -115.000 đ</text>
+
+  <!-- Transaction list card -->
+  <g filter="url(#shadow)">
+    <rect x="24" y="284" width="372" height="356" rx="30" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Hôm nay section -->
+  <text x="44" y="312" class="title" font-size="15">Hôm nay</text>
+  <rect x="44" y="326" width="332" height="74" rx="22" fill="#FBFDFF" class="stroke"/>
+  <circle cx="68" cy="350" r="14" fill="#FFF4E8"/>
+  <path d="M63 343V351M66 343V351M69 343V351" stroke="#F59E0B" stroke-width="1.7" stroke-linecap="round"/>
+  <path d="M73 343C70 347 70 351 73 355V357" stroke="#F59E0B" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+  <text x="92" y="347" class="body" font-size="13">Ăn uống</text>
+  <text x="92" y="364" class="light" font-size="11">Cơm trưa</text>
+  <text x="344" y="356" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#F04444">-45.000 đ</text>
+  <line x1="92" y1="373" x2="352" y2="373" stroke="#E6EDF5" stroke-width="1"/>
+
+  <circle cx="68" cy="386" r="14" fill="#EEF7FF"/>
+  <rect x="61" y="381" width="14" height="8" rx="2.5" stroke="#1788F3" stroke-width="1.6" fill="none"/>
+  <circle cx="64.5" cy="390.5" r="1.6" fill="#1788F3"/><circle cx="71.5" cy="390.5" r="1.6" fill="#1788F3"/>
+  <text x="92" y="383" class="body" font-size="13">Di chuyển</text>
+  <text x="92" y="400" class="light" font-size="11">Xăng xe</text>
+  <text x="344" y="392" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#F04444">-70.000 đ</text>
+
+  <!-- Hôm qua section -->
+  <text x="44" y="432" class="title" font-size="15">Hôm qua</text>
+  <rect x="44" y="446" width="332" height="74" rx="22" fill="#FBFDFF" class="stroke"/>
+  <circle cx="68" cy="470" r="14" fill="#EEF9F1"/>
+  <path d="M68 463V477M61 470H75" stroke="#2FBE35" stroke-width="2" stroke-linecap="round"/>
+  <text x="92" y="467" class="body" font-size="13">Lương tháng</text>
+  <text x="92" y="484" class="light" font-size="11">Chuyển khoản</text>
+  <text x="344" y="476" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#2FBE35">+8.000.000 đ</text>
+
+  <!-- Extra recent sample items for better layout -->
+  <text x="44" y="552" class="title" font-size="15">05/06/2026</text>
+  <rect x="44" y="566" width="332" height="58" rx="20" fill="#FBFDFF" class="stroke"/>
+  <circle cx="68" cy="595" r="14" fill="#F5F2FF"/>
+  <path d="M62 599L68 590L72 595L76 588" stroke="#7A5AF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="92" y="592" class="body" font-size="13">Giải trí</text>
+  <text x="92" y="609" class="light" font-size="11">Xem phim</text>
+  <text x="344" y="601" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#F04444">-120.000 đ</text>
+
+  <!-- Floating add button -->
+  <g filter="url(#shadow)">
+    <circle cx="340" cy="648" r="28" fill="url(#fab)"/>
+  </g>
+  <path d="M340 636V660M328 648H352" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
