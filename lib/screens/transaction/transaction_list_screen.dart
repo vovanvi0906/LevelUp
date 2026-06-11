@@ -46,6 +46,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
         backgroundColor: AppColors.scaffoldBackground,
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'transaction_list_add_fab',
         onPressed: widget.onAddTransactionTap,
         icon: const Icon(Icons.add_rounded),
         label: const Text('Thêm'),

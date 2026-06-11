@@ -38,28 +38,53 @@ class AppState extends ChangeNotifier {
     );
   }
 
-  double get monthlyIncome {
-    return transactionsByMonth(_referenceDate).fold<double>(
+  double get monthlyIncome => incomeByMonth(_referenceDate);
+
+  double get monthlyExpense => expenseByMonth(_referenceDate);
+
+  double get currentMonthBalance => balanceByMonth(_referenceDate);
+
+  List<SavingGoalModel> get activeSavingGoals {
+    final activeGoals = _savingGoals.where((goal) => !goal.isCompleted).toList()
+      ..sort((left, right) => left.deadline.compareTo(right.deadline));
+    return List.unmodifiable(activeGoals);
+  }
+
+  List<SavingGoalModel> get completedSavingGoals {
+    final completedGoals =
+        _savingGoals.where((goal) => goal.isCompleted).toList()
+          ..sort((left, right) => left.deadline.compareTo(right.deadline));
+    return List.unmodifiable(completedGoals);
+  }
+
+  List<TransactionModel> get recentTransactions {
+    final sortedTransactions = List<TransactionModel>.of(_transactions)
+      ..sort((left, right) => right.dateTime.compareTo(left.dateTime));
+    return List.unmodifiable(sortedTransactions);
+  }
+
+  double walletIncome(String walletId) {
+    if (findWalletById(walletId) == null) {
+      return 0;
+    }
+
+    return transactionsByWallet(walletId).fold<double>(
       0,
       (sum, transaction) =>
           transaction.isIncome ? sum + transaction.amount : sum,
     );
   }
 
-  double get monthlyExpense {
-    return transactionsByMonth(_referenceDate).fold<double>(
+  double walletExpense(String walletId) {
+    if (findWalletById(walletId) == null) {
+      return 0;
+    }
+
+    return transactionsByWallet(walletId).fold<double>(
       0,
       (sum, transaction) =>
           transaction.isExpense ? sum + transaction.amount : sum,
     );
-  }
-
-  double get currentMonthBalance => monthlyIncome - monthlyExpense;
-
-  List<TransactionModel> get recentTransactions {
-    final sortedTransactions = List<TransactionModel>.of(_transactions)
-      ..sort((left, right) => right.dateTime.compareTo(left.dateTime));
-    return List.unmodifiable(sortedTransactions);
   }
 
   WalletModel? findWalletById(String id) {
@@ -110,6 +135,26 @@ class AppState extends ChangeNotifier {
     return List.unmodifiable(filtered);
   }
 
+  double incomeByMonth(DateTime month) {
+    return transactionsByMonth(month).fold<double>(
+      0,
+      (sum, transaction) =>
+          transaction.isIncome ? sum + transaction.amount : sum,
+    );
+  }
+
+  double expenseByMonth(DateTime month) {
+    return transactionsByMonth(month).fold<double>(
+      0,
+      (sum, transaction) =>
+          transaction.isExpense ? sum + transaction.amount : sum,
+    );
+  }
+
+  double balanceByMonth(DateTime month) {
+    return incomeByMonth(month) - expenseByMonth(month);
+  }
+
   Map<String, double> expensesByCategory(DateTime month) {
     final expenses = <String, double>{};
 
@@ -125,6 +170,182 @@ class AppState extends ChangeNotifier {
     }
 
     return Map.unmodifiable(expenses);
+  }
+
+  CategoryModel? topExpenseCategory(DateTime month) {
+    final totalsByCategoryId = _expenseTotalsByCategoryId(month);
+
+    if (totalsByCategoryId.isEmpty) {
+      return null;
+    }
+
+    String? topCategoryId;
+    var topAmount = 0.0;
+
+    for (final entry in totalsByCategoryId.entries) {
+      if (entry.value > topAmount) {
+        topCategoryId = entry.key;
+        topAmount = entry.value;
+      }
+    }
+
+    if (topCategoryId == null) {
+      return null;
+    }
+
+    return findCategoryById(topCategoryId);
+  }
+
+  double expensePercentByCategory(String categoryId, DateTime month) {
+    final totalExpense = expenseByMonth(month);
+
+    if (totalExpense <= 0) {
+      return 0;
+    }
+
+    final categoryExpense = _expenseTotalsByCategoryId(month)[categoryId] ?? 0;
+    return (categoryExpense / totalExpense).clamp(0.0, 1.0).toDouble();
+  }
+
+  Map<String, double> _expenseTotalsByCategoryId(DateTime month) {
+    final expenses = <String, double>{};
+
+    for (final transaction in transactionsByMonth(month)) {
+      if (!transaction.isExpense) {
+        continue;
+      }
+
+      expenses[transaction.categoryId] =
+          (expenses[transaction.categoryId] ?? 0) + transaction.amount;
+    }
+
+    return expenses;
+  }
+
+  void addWallet(WalletModel wallet) {
+    _wallets.add(wallet);
+    notifyListeners();
+  }
+
+  void updateWallet(WalletModel updatedWallet) {
+    final walletIndex = _wallets.indexWhere(
+      (wallet) => wallet.id == updatedWallet.id,
+    );
+
+    if (walletIndex == -1) {
+      return;
+    }
+
+    _wallets[walletIndex] = updatedWallet;
+    notifyListeners();
+  }
+
+  bool deleteWallet(String walletId) {
+    if (!canDeleteWallet(walletId)) {
+      return false;
+    }
+
+    final walletIndex = _wallets.indexWhere((wallet) => wallet.id == walletId);
+
+    if (walletIndex == -1) {
+      return false;
+    }
+
+    _wallets.removeAt(walletIndex);
+    notifyListeners();
+    return true;
+  }
+
+  bool canDeleteWallet(String walletId) {
+    final walletExists = _wallets.any((wallet) => wallet.id == walletId);
+
+    if (!walletExists) {
+      return false;
+    }
+
+    return !_transactions.any(
+      (transaction) => transaction.walletId == walletId,
+    );
+  }
+
+  void addCategory(CategoryModel category) {
+    _categories.add(category);
+    notifyListeners();
+  }
+
+  void updateCategory(CategoryModel updatedCategory) {
+    final categoryIndex = _categories.indexWhere(
+      (category) => category.id == updatedCategory.id,
+    );
+
+    if (categoryIndex == -1) {
+      return;
+    }
+
+    _categories[categoryIndex] = updatedCategory;
+    notifyListeners();
+  }
+
+  bool deleteCategory(String categoryId) {
+    if (!canDeleteCategory(categoryId)) {
+      return false;
+    }
+
+    final categoryIndex = _categories.indexWhere(
+      (category) => category.id == categoryId,
+    );
+
+    if (categoryIndex == -1) {
+      return false;
+    }
+
+    _categories.removeAt(categoryIndex);
+    notifyListeners();
+    return true;
+  }
+
+  bool canDeleteCategory(String categoryId) {
+    final categoryExists = _categories.any(
+      (category) => category.id == categoryId,
+    );
+
+    if (!categoryExists) {
+      return false;
+    }
+
+    return !_transactions.any(
+      (transaction) => transaction.categoryId == categoryId,
+    );
+  }
+
+  void addSavingGoal(SavingGoalModel goal) {
+    _savingGoals.add(goal);
+    notifyListeners();
+  }
+
+  void updateSavingGoal(SavingGoalModel updatedGoal) {
+    final goalIndex = _savingGoals.indexWhere(
+      (goal) => goal.id == updatedGoal.id,
+    );
+
+    if (goalIndex == -1) {
+      return;
+    }
+
+    _savingGoals[goalIndex] = updatedGoal;
+    notifyListeners();
+  }
+
+  bool deleteSavingGoal(String goalId) {
+    final goalIndex = _savingGoals.indexWhere((goal) => goal.id == goalId);
+
+    if (goalIndex == -1) {
+      return false;
+    }
+
+    _savingGoals.removeAt(goalIndex);
+    notifyListeners();
+    return true;
   }
 
   void addTransaction(TransactionModel transaction) {

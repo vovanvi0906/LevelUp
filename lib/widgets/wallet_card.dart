@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saveup/core/theme/app_colors.dart';
 import 'package:saveup/core/utils/currency_formatter.dart';
+import 'package:saveup/core/utils/model_display.dart';
 import 'package:saveup/models/wallet_model.dart';
 
 class WalletCard extends StatelessWidget {
@@ -29,7 +30,7 @@ class WalletCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
-              _iconForWallet(wallet.iconName),
+              ModelDisplay.walletIcon(wallet.iconName),
               color: AppColors.white,
               size: 22,
             ),
@@ -64,20 +65,5 @@ class WalletCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  IconData _iconForWallet(String iconName) {
-    switch (iconName) {
-      case 'account_balance':
-        return Icons.account_balance_rounded;
-      case 'payment':
-        return Icons.phone_android_rounded;
-      case 'savings':
-        return Icons.savings_rounded;
-      case 'wallet':
-        return Icons.account_balance_wallet_rounded;
-      default:
-        return Icons.wallet_rounded;
-    }
   }
 }

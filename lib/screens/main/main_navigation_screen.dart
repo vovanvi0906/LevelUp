@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:saveup/screens/home/home_screen.dart';
+import 'package:saveup/screens/profile/profile_screen.dart';
 import 'package:saveup/screens/transaction/add_transaction_screen.dart';
 import 'package:saveup/screens/transaction/transaction_list_screen.dart';
+import 'package:saveup/screens/wallet/wallet_list_screen.dart';
 import 'package:saveup/state/app_state.dart';
-import 'package:saveup/widgets/coming_soon_placeholder.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -53,16 +54,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         appState: _appState,
         onTransactionSaved: _openTransactionListTab,
       ),
-      const ComingSoonPlaceholder(
-        icon: Icons.account_balance_wallet_rounded,
-        title: 'Ví tiền',
-        description: 'Danh sách ví của bạn sẽ hiển thị tại đây.',
-      ),
-      const ComingSoonPlaceholder(
-        icon: Icons.person_rounded,
-        title: 'Cá nhân',
-        description: 'Thông tin tài khoản và cài đặt sẽ hiển thị tại đây.',
-      ),
+      WalletListScreen(appState: _appState),
+      ProfileScreen(appState: _appState),
     ];
   }
 
