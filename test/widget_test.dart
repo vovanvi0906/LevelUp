@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saveup/app/levelup_app.dart';
 import 'package:saveup/screens/main/main_navigation_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('LevelUpApp opens welcome, login, then main navigation', (
     WidgetTester tester,
   ) async {
@@ -40,6 +45,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: MainNavigationScreen()));
+    await tester.pumpAndSettle();
 
     expect(find.text('Trang chủ'), findsWidgets);
     expect(find.text('Số dư hiện tại'), findsOneWidget);

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:saveup/data/local_storage_service.dart';
 import 'package:saveup/data/mock_data.dart';
 import 'package:saveup/models/category_model.dart';
 import 'package:saveup/models/saving_goal_model.dart';
@@ -11,13 +14,15 @@ class AppState extends ChangeNotifier {
   final List<CategoryModel> _categories;
   final List<TransactionModel> _transactions;
   final List<SavingGoalModel> _savingGoals;
+  final LocalStorageService _storageService;
 
-  AppState({DateTime? referenceDate})
+  AppState({DateTime? referenceDate, LocalStorageService? storageService})
     : _referenceDate = referenceDate ?? MockData.referenceDate,
       _wallets = List<WalletModel>.of(MockData.wallets),
       _categories = List<CategoryModel>.of(MockData.categories),
       _transactions = List<TransactionModel>.of(MockData.transactions),
-      _savingGoals = List<SavingGoalModel>.of(MockData.savingGoals);
+      _savingGoals = List<SavingGoalModel>.of(MockData.savingGoals),
+      _storageService = storageService ?? LocalStorageService();
 
   List<WalletModel> get wallets => List.unmodifiable(_wallets);
 
@@ -222,8 +227,84 @@ class AppState extends ChangeNotifier {
     return expenses;
   }
 
+  Future<void> loadFromLocalStorage() async {
+    final wallets = await _storageService.loadWallets();
+    final categories = await _storageService.loadCategories();
+    final transactions = await _storageService.loadTransactions();
+    final savingGoals = await _storageService.loadSavingGoals();
+
+    _wallets
+      ..clear()
+      ..addAll(wallets ?? MockData.wallets);
+    _categories
+      ..clear()
+      ..addAll(categories ?? MockData.categories);
+    _transactions
+      ..clear()
+      ..addAll(transactions ?? MockData.transactions);
+    _savingGoals
+      ..clear()
+      ..addAll(savingGoals ?? MockData.savingGoals);
+
+    notifyListeners();
+  }
+
+  Future<void> saveToLocalStorage() async {
+    await Future.wait([
+      _storageService.saveWallets(_wallets),
+      _storageService.saveCategories(_categories),
+      _storageService.saveTransactions(_transactions),
+      _storageService.saveSavingGoals(_savingGoals),
+    ]);
+  }
+
+  Future<void> resetToDefaultData() async {
+    _wallets
+      ..clear()
+      ..addAll(MockData.wallets);
+    _categories
+      ..clear()
+      ..addAll(MockData.categories);
+    _transactions
+      ..clear()
+      ..addAll(MockData.transactions);
+    _savingGoals
+      ..clear()
+      ..addAll(MockData.savingGoals);
+
+    await saveToLocalStorage();
+    notifyListeners();
+  }
+
+  Future<void> clearLocalData() async {
+    await _storageService.clearAll();
+    _wallets
+      ..clear()
+      ..addAll(MockData.wallets);
+    _categories
+      ..clear()
+      ..addAll(MockData.categories);
+    _transactions
+      ..clear()
+      ..addAll(MockData.transactions);
+    _savingGoals
+      ..clear()
+      ..addAll(MockData.savingGoals);
+    notifyListeners();
+  }
+
+  Future<String> exportJsonString() {
+    return _storageService.exportJsonString(
+      wallets: _wallets,
+      categories: _categories,
+      transactions: _transactions,
+      savingGoals: _savingGoals,
+    );
+  }
+
   void addWallet(WalletModel wallet) {
     _wallets.add(wallet);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -237,6 +318,7 @@ class AppState extends ChangeNotifier {
     }
 
     _wallets[walletIndex] = updatedWallet;
+    _saveSafely();
     notifyListeners();
   }
 
@@ -252,6 +334,7 @@ class AppState extends ChangeNotifier {
     }
 
     _wallets.removeAt(walletIndex);
+    _saveSafely();
     notifyListeners();
     return true;
   }
@@ -270,6 +353,7 @@ class AppState extends ChangeNotifier {
 
   void addCategory(CategoryModel category) {
     _categories.add(category);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -283,6 +367,7 @@ class AppState extends ChangeNotifier {
     }
 
     _categories[categoryIndex] = updatedCategory;
+    _saveSafely();
     notifyListeners();
   }
 
@@ -300,6 +385,7 @@ class AppState extends ChangeNotifier {
     }
 
     _categories.removeAt(categoryIndex);
+    _saveSafely();
     notifyListeners();
     return true;
   }
@@ -320,6 +406,7 @@ class AppState extends ChangeNotifier {
 
   void addSavingGoal(SavingGoalModel goal) {
     _savingGoals.add(goal);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -333,6 +420,7 @@ class AppState extends ChangeNotifier {
     }
 
     _savingGoals[goalIndex] = updatedGoal;
+    _saveSafely();
     notifyListeners();
   }
 
@@ -344,6 +432,7 @@ class AppState extends ChangeNotifier {
     }
 
     _savingGoals.removeAt(goalIndex);
+    _saveSafely();
     notifyListeners();
     return true;
   }
@@ -351,6 +440,7 @@ class AppState extends ChangeNotifier {
   void addTransaction(TransactionModel transaction) {
     _transactions.add(transaction);
     _applyTransactionToWallet(transaction);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -367,6 +457,7 @@ class AppState extends ChangeNotifier {
     _rollbackTransactionFromWallet(oldTransaction);
     _transactions[transactionIndex] = updatedTransaction;
     _applyTransactionToWallet(updatedTransaction);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -381,6 +472,7 @@ class AppState extends ChangeNotifier {
 
     final transaction = _transactions.removeAt(transactionIndex);
     _rollbackTransactionFromWallet(transaction);
+    _saveSafely();
     notifyListeners();
   }
 
@@ -403,6 +495,10 @@ class AppState extends ChangeNotifier {
     _wallets[walletIndex] = wallet.copyWith(
       balance: wallet.balance + amountChange,
     );
+  }
+
+  void _saveSafely() {
+    unawaited(saveToLocalStorage().catchError((_) {}));
   }
 
   T? _firstWhereOrNull<T>(Iterable<T> items, bool Function(T item) test) {

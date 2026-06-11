@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saveup/core/theme/app_colors.dart';
 import 'package:saveup/screens/home/home_screen.dart';
 import 'package:saveup/screens/profile/profile_screen.dart';
 import 'package:saveup/screens/transaction/add_transaction_screen.dart';
@@ -16,6 +17,13 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final _appState = AppState();
   var _selectedIndex = 0;
+  var _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
   @override
   void dispose() {
@@ -37,6 +45,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   void _refreshTransactionUi() {
     setState(() {});
+  }
+
+  Future<void> _loadData() async {
+    await _appState.loadFromLocalStorage();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   List<Widget> get _pages {
@@ -61,6 +81,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.scaffoldBackground,
+        body: SafeArea(child: Center(child: CircularProgressIndicator())),
+      );
+    }
+
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
